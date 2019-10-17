@@ -8,52 +8,55 @@ class Funcoes{
         int tamanho = proposicao.length();
 
         for(int i = 0; i < tamanho; i++){
+            char atual = proposicao.charAt(i);
             if(i == 0){ //Para quando o caractere for o primeiro, e nao querer acessar uma posicao fora do array
-                if(proposicao.charAt(i) != '(' && proposicao.charAt(i) != '~'){
+                if(atual != '(' && atual != '~'){
                     res = false;
                 }
             } else if(i == tamanho-1){ //para quando o caractere for o ultimo, e nao querer acessar uma posicao fora do array
-                if(proposicao.charAt(i) != ')'){
+                if(atual != ')'){
                     res = false;
                 }
             } else { //Para o restante dos caracteres
-                if(proposicao.charAt(i) == '<' || proposicao.charAt(i) == '>'){
+                char proximo = proposicao.charAt(i+1);
+                char anterior = proposicao.charAt(i-1);
+                if(atual == '<' || atual == '>'){
                     res = false;
-                } else if(proposicao.charAt(i) == '&'){
-                    if(proposicao.charAt(i-1) != ')' || proposicao.charAt(i+1) != '(') {
+                } else if(atual == '&'){
+                    if(anterior != ')' || proximo != '(') {
                         res = false;
                     }
-                } else if (proposicao.charAt(i) == 'P' || proposicao.charAt(i) == 'Q' || proposicao.charAt(i) == 'R' || proposicao.charAt(i) == 'S'){
-                    if(proposicao.charAt(i-1) != '(' && proposicao.charAt(i-1) != '~' && proposicao.charAt(i-1) != 'v'){
+                } else if (atual == 'P' || atual == 'Q' || atual == 'R' || atual == 'S'){
+                    if(anterior != '(' && anterior != '~' && anterior != 'v'){
                         res = false;
-                    } else if (proposicao.charAt(i+1) != ')' && proposicao.charAt(i+1) != 'v'){
-                        res = false;
-                    }
-                } else if (proposicao.charAt(i) == 'v' ){
-                    if(proposicao.charAt(i-1) != 'P' && proposicao.charAt(i-1) != 'Q' && proposicao.charAt(i-1) != 'R' && proposicao.charAt(i-1) != 'S' ){
-                        res = false;
-                    } else if (proposicao.charAt(i+1) != 'P' && proposicao.charAt(i+1) != 'Q' && proposicao.charAt(i+1) != 'R' && proposicao.charAt(i+1) != 'S' && proposicao.charAt(i+1) != '~'){
+                    } else if (proximo != ')' && proximo != 'v'){
                         res = false;
                     }
-                } else if (proposicao.charAt(i) == '~' ){
-                    if(proposicao.charAt(i-1) != 'P' && proposicao.charAt(i-1) != 'Q' && proposicao.charAt(i-1) != 'R' && proposicao.charAt(i-1) != 'S' &&
-                            proposicao.charAt(i-1) != '(' && proposicao.charAt(i-1) != 'v'){
+                } else if (atual == 'v' ){
+                    if(anterior != 'P' && anterior != 'Q' && anterior != 'R' && anterior != 'S' ){
                         res = false;
-                    } else if (proposicao.charAt(i+1) != 'P' && proposicao.charAt(i+1) != 'Q' && proposicao.charAt(i+1) != 'R' && proposicao.charAt(i+1) != 'S'){
-                        res = false;
-                    }
-                } else if (proposicao.charAt(i) == '('){
-                    if (proposicao.charAt(i-1) != '&' ){
-                        res = false;
-                    } else if (proposicao.charAt(i+1) != 'P' && proposicao.charAt(i+1) != 'Q' && proposicao.charAt(i+1) != 'R' && proposicao.charAt(i+1) != 'S' &&
-                            proposicao.charAt(i+1) != '~'){
+                    } else if (proximo != 'P' && proximo != 'Q' && proximo != 'R' && proximo != 'S' && proximo != '~'){
                         res = false;
                     }
-                } else if (proposicao.charAt(i) == ')'){
-                    if (proposicao.charAt(i-1) != 'P' && proposicao.charAt(i-1) != 'Q' && proposicao.charAt(i-1) != 'R' && proposicao.charAt(i-1) != 'S' &&
-                            proposicao.charAt(i-1) != ')'){
+                } else if (atual == '~' ){
+                    if(anterior != 'P' && anterior != 'Q' && anterior != 'R' && anterior != 'S' &&
+                            anterior != '(' && anterior != 'v'){
                         res = false;
-                    } else if (proposicao.charAt(i+1) != ')' && proposicao.charAt(i+1) != '&' && proposicao.charAt(i+1) != 'v'){
+                    } else if (proximo != 'P' && proximo != 'Q' && proximo != 'R' && proximo != 'S'){
+                        res = false;
+                    }
+                } else if (atual == '('){
+                    if (anterior != '&' ){
+                        res = false;
+                    } else if (proximo != 'P' && proximo != 'Q' && proximo != 'R' && proximo != 'S' &&
+                            proximo != '~'){
+                        res = false;
+                    }
+                } else if (atual == ')'){
+                    if (anterior != 'P' && anterior != 'Q' && anterior != 'R' && anterior != 'S' &&
+                            anterior != ')'){
+                        res = false;
+                    } else if (proximo != ')' && proximo != '&' && proximo != 'v'){
                         res = false;
                     }
                 }
@@ -91,36 +94,48 @@ class Funcoes{
 
     public boolean Satisfativel(String proposicao){ //Se encontrar uma clausula vazia é satisfativel
         boolean res = true;
-        Queue<String> unitarias = new LinkedList<String>();
+        Queue<String> unitarias = new LinkedList<String>(); //Irei usar uma lista para armazenar as clausulas unitarias, isso vai me ajudar a controlar quem eu ja verifiquei
         String[] clausulas = proposicao.split("&");
+        ArrayList<String> clausulasVector = new ArrayList<>();
 
         for(int i = 0; i < clausulas.length; i++){
-            for(int j = 0; j < clausulas[i].length(); j++){
-                if(clausulas[i].charAt(j) >= 80 && clausulas[i].charAt(j) <= 83){
-                    if(clausulas[i].charAt(j+1) == ')' && (clausulas[i].charAt(j-1) == '(' || clausulas[i].charAt(j-2) == '(')){ //Verifica se é uma clausula unitaria...
-                        unitarias.add(clausulas[i]);
-                    }
-                }
+            clausulasVector.add(clausulas[i]);
+            if(clausulas[i].length() == 3 || clausulas[i].length() == 4){
+                unitarias.add(clausulas[i]);
             }
-            if(unitarias.isEmpty() == true){ //Entre as clausulas nao existe nenhuma unitaria logo, nao e satisfativel
-                return false;
-            } else {
-                while (unitarias.isEmpty() == false){
-                    String auxUnitarias = unitarias.remove();
-                    if(auxUnitarias.length() == 3){ //A clausula so possui um literal "positivo"
-                        char literal = auxUnitarias.charAt(1);
-                        for(int  k = 0; k < clausulas.length; k++){
-                            String auxClausula = "";
-                            for(int l = 0; l < clausulas[k].length(); l++){
-                                if(clausulas[k].charAt(l) != literal && (clausulas[k].charAt(l) == '~' && clausulas[k].charAt(l+1) != literal)){ //Preciso arrumar essa condicao, eu quero que ele entre apenas se ele for diferente do literou, e caso for ~ so se p proximo for diferente do literal tambem
-                                    //PAREI AQUI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        }
+        if(unitarias.isEmpty() == true) { //Entre as clausulas nao existe nenhuma unitaria logo, nao e satisfativel
+            return true;
+        }
+        while (unitarias.isEmpty() == false){ //Na hora de retirar os literais RETIRAR os operadores tambem
+            String auxUnitarias = unitarias.remove();
+            if(auxUnitarias.length() == 3){ //A clausula so possui um variavel "positivo"
+                char variavel = auxUnitarias.charAt(1);
+                int quantidadeClausulas = clausulasVector.size();
+                for(int  k = 0; k < quantidadeClausulas; k++){
+                    String auxClausula = "";
+                    for(int l = 0; l < clausulasVector.get(k).length(); l++){
+                        if(clausulasVector.get(k).charAt(l) != variavel){
+                            if(clausulasVector.get(k).charAt(l) == '~'){
+                                if (clausulasVector.get(k).charAt(l+1) != variavel){
+                                    auxClausula += clausulasVector.get(k).charAt(l); //E uma negacao de uma variavel diverente da variavel que estamos avaliando
                                 }
+                            } else {
+                                auxClausula += clausulasVector.get(k).charAt(l); //Nesse caso e um digito diferente do variavel que estamos avaliando
                             }
+                        } else if(clausulasVector.get(k).charAt(l-1) != '~'){
+                            auxClausula += clausulasVector.get(k).charAt(l);
                         }
-                    } else { //A clausula so possui um literal "negativo"
-
+                    }
+                    if(auxClausula == "()"){
+                        return false;
+                    } else if(auxClausula != clausulasVector.get(k)){
+                        clausulasVector.add(auxClausula);
+                        quantidadeClausulas++;
                     }
                 }
+            } else { //A clausula so possui um variavel "negativo"
+
             }
         }
 
@@ -179,7 +194,8 @@ public class Main {
         System.out.println();*/
 
         /*  Parei no metodo satisfativel
-            Estava fazendo as condicoes para poder eliminar os priterais...
+            Estava fazendo as condicoes para poder eliminar os literais
+            Porem devo me atentar para tirar os operadores "v"
          */
 
     }
