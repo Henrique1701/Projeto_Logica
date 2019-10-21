@@ -94,11 +94,11 @@ class Funcoes{
 
     public boolean Satisfativel(String proposicao){ //Se encontrar uma clausula vazia é satisfativel
         boolean res = true;
-        Queue<String> unitarias = new LinkedList<String>(); //Irei usar uma lista para armazenar as clausulas unitarias, isso vai me ajudar a controlar quem eu ja verifiquei
-        Queue<String> pClausulas = new LinkedList<String>(); //Essa e as tres listas seguimtes servira para armazenar as clausula que contem o literal em questao
-        Queue<String> qClausulas = new LinkedList<String>();
-        Queue<String> rClausulas = new LinkedList<String>();
-        Queue<String> sClausulas = new LinkedList<String>();
+        Queue<String> unitarias = new LinkedList<>(); //Irei usar uma lista para armazenar as clausulas unitarias, isso vai me ajudar a controlar quem eu ja verifiquei
+        Queue<String> pClausulas = new LinkedList<>(); //Essa e as tres listas seguimtes servira para armazenar as clausula que contem o literal em questao
+        Queue<String> qClausulas = new LinkedList<>();
+        Queue<String> rClausulas = new LinkedList<>();
+        Queue<String> sClausulas = new LinkedList<>();
         String[] clausulas = proposicao.split("&"); //Cria um array de clausulas
         ArrayList<String> clausulasVector = new ArrayList<>();
 
@@ -116,32 +116,51 @@ class Funcoes{
         }
         while (unitarias.isEmpty() == false){ //Na hora de retirar os literais RETIRAR os operadores tambem
             String auxUnitarias = unitarias.remove();
-            if(auxUnitarias.length() == 3){ //A clausula so possui um variavel "positivo"
-                char variavel = auxUnitarias.charAt(1);
+            if(auxUnitarias.length() == 3){ //A clausula so possui um literal "positivo"
+                char literal = auxUnitarias.charAt(1);
                 int quantidadeClausulas = clausulasVector.size();
                 for(int  k = 0; k < quantidadeClausulas; k++){
                     String auxClausula = "";
-                    for(int l = 0; l < clausulasVector.get(k).length(); l++){
-                        if(clausulasVector.get(k).charAt(l) != variavel){
-                            if(clausulasVector.get(k).charAt(l) == '~'){
-                                if (clausulasVector.get(k).charAt(l+1) != variavel){
-                                    auxClausula += clausulasVector.get(k).charAt(l); //E uma negacao de uma variavel diverente da variavel que estamos avaliando
+                    String clausulaAtual = clausulasVector.get(k);
+                    for(int l = 0; l < clausulaAtual.length(); l++){
+                        if(clausulaAtual.charAt(l) == '~'){
+                            if(clausulaAtual.charAt(l+1) != literal){
+                                auxClausula += clausulaAtual.charAt(l);
+                                auxClausula += clausulaAtual.charAt(l);
+                                l++;
+                            } else {
+                                l++;
+                            }
+                        } else if (clausulaAtual.charAt(l) == 'v') {
+                            if(auxClausula.charAt(auxClausula.length()-1) != 'v'){
+                                auxClausula += clausulaAtual.charAt(l);
+                            }
+                        } else if(clausulaAtual.charAt(l) == literal){ //Se entrar aqui preciso eliminar a clausula toda
+                            auxClausula = "";
+                            l = clausulaAtual.length();
+                        } else {
+                            //PAREI AQUI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        }
+                        /*if(clausulaAtual.charAt(l) != literal){
+                            if(clausulaAtual.charAt(l) == '~'){
+                                if (clausulaAtual.charAt(l+1) != literal){
+                                    auxClausula += clausulaAtual.charAt(l); //E uma negacao de uma literal diverente da literal que estamos avaliando
                                 }
                             } else {
-                                auxClausula += clausulasVector.get(k).charAt(l); //Nesse caso e um digito diferente do variavel que estamos avaliando
+                                auxClausula += clausulaAtual.charAt(l); //Nesse caso e um digito diferente do literal que estamos avaliando
                             }
-                        } else if(clausulasVector.get(k).charAt(l-1) != '~'){
-                            auxClausula += clausulasVector.get(k).charAt(l);
-                        }
+                        } else if(clausulaAtual.charAt(l-1) != '~'){
+                            auxClausula += clausulaAtual.charAt(l);
+                        }*/
                     }
                     if(auxClausula == "()"){
                         return false;
-                    } else if(auxClausula != clausulasVector.get(k)){
+                    } else if(auxClausula != clausulaAtual){
                         clausulasVector.add(auxClausula);
                         quantidadeClausulas++;
                     }
                 }
-            } else { //A clausula so possui um variavel "negativo"
+            } else { //A clausula so possui um literal "negativo"
 
             }
         }
