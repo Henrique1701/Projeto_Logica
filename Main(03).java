@@ -126,13 +126,14 @@ class Funcoes{
                         if(clausulaAtual.charAt(l) == '~'){
                             if(clausulaAtual.charAt(l+1) != literal){
                                 auxClausula += clausulaAtual.charAt(l);
-                                auxClausula += clausulaAtual.charAt(l);
+                                auxClausula += clausulaAtual.charAt(l+1);
                                 l++;
                             } else {
                                 l++;
                             }
                         } else if (clausulaAtual.charAt(l) == 'v') {
-                            if(auxClausula.charAt(auxClausula.length()-1) != 'v'){
+                            if(auxClausula.charAt(auxClausula.length()-1) != 'v' && auxClausula.charAt(auxClausula.length()-1) != '(' &&
+                            l != clausulaAtual.length()-2){
                                 auxClausula += clausulaAtual.charAt(l);
                             }
                         } else if(clausulaAtual.charAt(l) == literal){ //Se entrar aqui preciso eliminar a clausula toda
@@ -155,7 +156,7 @@ class Funcoes{
                     }
                     if(auxClausula == "()"){
                         return false;
-                    } else if(auxClausula != clausulaAtual){
+                    } else if(auxClausula != clausulaAtual && auxClausula != ""){
                         clausulasVector.add(auxClausula);
                         quantidadeClausulas++;
                     }
