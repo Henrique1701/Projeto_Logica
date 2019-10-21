@@ -79,7 +79,7 @@ class Funcoes{
             for(int j = 0; j < clausulas[i].length(); j++){
                 if(clausulas[i].charAt(j) == '~'){
                     quantNegacoes++;
-                } else if (clausulas[i].charAt(j) < 80 || clausulas[i].charAt(j) > 83){ //P = 80, Q = 81, R = 82, S = 83
+                } else if (clausulas[i].charAt(j) < 80 && clausulas[i].charAt(j) > 83){ //P = 80, Q = 81, R = 82, S = 83
                     quantLiterais++;
                 }
             }
@@ -95,14 +95,14 @@ class Funcoes{
     public boolean Satisfativel(String proposicao){ //Se encontrar uma clausula vazia é satisfativel
         boolean res = true;
         Queue<String> unitarias = new LinkedList<>(); //Irei usar uma lista para armazenar as clausulas unitarias, isso vai me ajudar a controlar quem eu ja verifiquei
-        Queue<String> pClausulas = new LinkedList<>(); //Essa e as tres listas seguimtes servira para armazenar as clausula que contem o literal em questao
-        Queue<String> qClausulas = new LinkedList<>();
-        Queue<String> rClausulas = new LinkedList<>();
-        Queue<String> sClausulas = new LinkedList<>();
+        //Queue<String> pClausulas = new LinkedList<>(); //Essa e as tres listas seguimtes servira para armazenar as clausula que contem o literal em questao
+        //Queue<String> qClausulas = new LinkedList<>();
+        //Queue<String> rClausulas = new LinkedList<>();
+        //Queue<String> sClausulas = new LinkedList<>();
         String[] clausulas = proposicao.split("&"); //Cria um array de clausulas
         ArrayList<String> clausulasVector = new ArrayList<>();
 
-        String clausulaRemovida = pClausulas.poll();
+        //String clausulaRemovida = pClausulas.poll();
 
 
         for(int i = 0; i < clausulas.length; i++){
@@ -117,7 +117,7 @@ class Funcoes{
         while (unitarias.isEmpty() == false){ //Na hora de retirar os literais RETIRAR os operadores tambem
             String auxUnitarias = unitarias.remove();
             if(auxUnitarias.length() == 3){ //A clausula so possui um literal "positivo"
-                char literal = auxUnitarias.charAt(1);
+                char literal = auxUnitarias.charAt(1); //Pega qual é a variavel do literal
                 int quantidadeClausulas = clausulasVector.size();
                 for(int  k = 0; k < quantidadeClausulas; k++){
                     String auxClausula = "";
@@ -138,8 +138,8 @@ class Funcoes{
                         } else if(clausulaAtual.charAt(l) == literal){ //Se entrar aqui preciso eliminar a clausula toda
                             auxClausula = "";
                             l = clausulaAtual.length();
-                        } else {
-                            //PAREI AQUI !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+                        } else { //Deve entrar aqui quando a digito atual for igual a '(' ou ')' ou 'P' ou 'Q' ou 'R' ou 'S'. Diferente de literal atual
+                            auxClausula += clausulaAtual.charAt(l);
                         }
                         /*if(clausulaAtual.charAt(l) != literal){
                             if(clausulaAtual.charAt(l) == '~'){
@@ -161,7 +161,34 @@ class Funcoes{
                     }
                 }
             } else { //A clausula so possui um literal "negativo"
+                char literal = auxUnitarias.charAt(2); //Pega qual é a variavel do literal
+                int quantidadeClausulas = clausulasVector.size();
+                for(int  k = 0; k < quantidadeClausulas; k++) {
+                    String auxClausula = "";
+                    String clausulaAtual = clausulasVector.get(k);
+                    for(int l = 0; l < clausulaAtual.length(); l++){
+                        if(clausulaAtual.charAt(l) == '~'){
+                            if(clausulaAtual.charAt(l+1) == literal){
+                                l++;
+                            }
+                        } else if(clausulaAtual.charAt(l) == 'v'){
+                            if(auxClausula.charAt(auxClausula.length()) != 'v'){
+                                auxClausula += clausulaAtual.charAt(l);
+                            }
+                        } else if(clausulaAtual.charAt(l) == literal){
+                            //Nao faz nada, ou seja so ignora essa variavel
+                        } else { //Deve entrar aqui quando a digito atual for igual a '(' ou ')' ou 'P' ou 'Q' ou 'R' ou 'S'. Diferente de literal atual
+                            auxClausula += clausulaAtual.charAt(l);
+                        }
+                    }
 
+                    if(auxClausula == "()"){
+                        return false;
+                    } else if(auxClausula != clausulaAtual){
+                        clausulasVector.add(auxClausula);
+                        quantidadeClausulas++;
+                    }
+                }
             }
         }
 
@@ -193,7 +220,11 @@ public class Main {
                 if(funcoes.Horn(proposicao) == false){
                     System.out.println("Nem todas as cláusulas são de Horn.");
                 } else { //Verificar se é satisfativel
-
+                    if(funcoes.Satisfativel(proposicao) == false){
+                        System.out.println("Não, não é satisfatível.");
+                    } else {
+                        System.out.println("Sim, é satisfatível.");
+                    }
                 }
             }
             System.out.println();
