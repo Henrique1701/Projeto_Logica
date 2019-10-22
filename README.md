@@ -9,14 +9,20 @@ As N linhas seguintes conterão proposições.
 
 Sintaxe
 Operadores: cada entrada será composta por 5 operadores. Seus símbolos usados estão listados abaixo.
+
 ~ | Negação
+
 v | Disjunção
+
 & | Conjunção
+
 > | Implicação
+
 < | Equivalência (bi-implicação)
+
 Variáveis: a entrada terá no máximo 4 variáveis - P, Q, R e S.
-Parênteses:
-Todas as cláusulas estão envoltas em parênteses, até mesmo as unitárias.
+
+Parênteses: todas as cláusulas estão envoltas em parênteses, até mesmo as unitárias.
 
 Saída
 Seu programa deve gerar uma saída: “saida.out”
@@ -30,7 +36,9 @@ Caso contrário, seu programa deve imprimir a resposta do problema: "Sim, é sat
 
 Cláusulas de Horn:
 Uma cláusula é dita cláusula de Horn se, e somente se, contém, no máximo, um literal positivo. Exemplos:
+
 Exemplo #1:
 (~P) & (P v ~R v ~S v ~S) & (~S v R v ~P) & (Q) & (P v ~S v ~S v ~Q) & (~P v ~R v ~P)
+
 Exemplo #2:
 (S) & (P v ~S v ~S) & (~P) & (R) & (Q) & (~R v ~S v S) & (~P) & (~R v Q v ~Q v ~P v ~Q)
